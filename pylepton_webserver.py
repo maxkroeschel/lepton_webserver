@@ -15,12 +15,13 @@ import cv2
 import traceback
 from pylepton.Lepton3 import Lepton3
 
+
 # This is the webserver handler
 class CamHandler(BaseHTTPRequestHandler):
 	# Init stuff for PyLepton
 	a = np.zeros((240, 320, 3), dtype=np.uint8)
 	lepton_buf = np.zeros((120, 160, 1), dtype=np.uint16)
-	img = picamera.PiCamera().add_overlay(np.getbuffer(a), size=(320,240), layer=3, alpha=int(128), crop=(0,0,160,120), vflip=flip_v)
+	img = camera.add_overlay(np.getbuffer(a), size=(320,240), layer=3, alpha=int(128), crop=(0,0,160,120), vflip=False)
 	last_nr = 0
 
 	def do_GET(self):
@@ -57,7 +58,7 @@ class CamHandler(BaseHTTPRequestHandler):
 					traceback.print_exc()
 					
 				finally:
-					picamera.PiCamera().remove_overlay(img)
+					camera.remove_overlay(img)
 			return
 			
 		if self.path.endswith('.html'):
@@ -72,11 +73,13 @@ class CamHandler(BaseHTTPRequestHandler):
 # Main entry point
 def main():
 	# Init PiCamera
-	picamera.PiCamera().resolution = (640, 480)
-	picamera.PiCamera().framerate = 24
-	picamera.PiCamera().vflip = False
-	picamera.PiCamera().start_preview()
-	picamera.PiCamera().fullscreen = True
+  with picamera.PiCamera() as camera:
+	camera.resolution = (640, 480)
+	camera.framerate = 24
+	camera.vflip = False
+	camera.start_preview()
+	# picamera.PiCamera().fullscreen = True
+	camera.zoom = (0.0, 0.0, 1.0, 1.0)
 	
 	# Init Server
 	try:

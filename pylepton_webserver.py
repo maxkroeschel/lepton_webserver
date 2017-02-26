@@ -72,15 +72,15 @@ class CamHandler(BaseHTTPRequestHandler):
 
 # Main entry point
 def main():
-	# Init PiCamera
-  with picamera.PiCamera() as camera:
-	camera.resolution = (640, 480)
-	camera.framerate = 24
-	camera.vflip = False
-	camera.start_preview()
-	# picamera.PiCamera().fullscreen = True
-	camera.zoom = (0.0, 0.0, 1.0, 1.0)
-	
+        global camera
+  # Init PiCamera
+        camera = picamera.PiCamera()
+        camera.resolution = (640, 480)
+        camera.framerate = 24
+        camera.vflip = False
+        camera.start_preview()
+        # picamera.PiCamera().fullscreen = True
+        camera.zoom = (0.0, 0.0, 1.0, 1.0)
 	# Init Server
 	try:
 		time.sleep(0.2)
@@ -90,6 +90,7 @@ def main():
 		server.serve_forever()
 		
 	except KeyboardInterrupt:
+                camera.close()
 		server.socket.close()
 
 if __name__ == '__main__':
